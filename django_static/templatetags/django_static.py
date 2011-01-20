@@ -464,6 +464,11 @@ def _static_file(filename,
         else:
             #content = open(filepath).read()
             content = codecs.open(filepath, 'r', 'utf-8').read()
+        
+        # Render django template_tags within javascript and stylesheet files
+        if new_filename.endswith('.js') or new_filename.endswith('.css'):
+            content = render_template_tags(content)
+        
         if new_filename.endswith('.js') and has_optimizer(JS):
             content = optimize(content, JS)
         elif new_filename.endswith('.css') and has_optimizer(CSS):
@@ -666,6 +671,15 @@ def _combine_filenames(filenames, max_length=40):
     new_filename += extension
 
     return os.path.join(path, new_filename)
+
+
+def render_template_tags(content):
+    from django.template import Context, Template
+    t = Template(content)
+    # TODO - provide more context such as settings, site etc.
+    c = Context({})
+    content = t.render(c)
+    return content
 
 
 CSS = 'css'
