@@ -676,8 +676,7 @@ def _combine_filenames(filenames, max_length=40):
 def render_template_tags(content):
     from django.template import Context, Template
     t = Template(content)
-    # TODO - provide more context such as settings, site etc.
-    c = Context({})
+    c = Context({'MEDIA_URL':MEDIA_URL, 'settings':settings})
     content = t.render(c)
     return content
 
